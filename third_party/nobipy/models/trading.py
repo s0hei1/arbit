@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass, asdict
-from third_party.nobipymodels.abstracts import DataclassMappings
+from third_party.nobipy.models.abstracts import DataclassMappings
 from typing import Literal,Any
 from datetime import datetime
 
