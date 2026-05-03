@@ -1,0 +1,4 @@
+
+
+class NotTestedError(NotImplementedError):
+    pass
