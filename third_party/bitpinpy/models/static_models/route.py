@@ -18,7 +18,9 @@ class Route:
 
 class Routes:
     authenticate : ClassVar[Route] = Route(url = "api/v1/usr/authenticate/", privacy_type = "public",http_method = HTTPMethod.POST)
+
     get_currencies : ClassVar[Route] = Route(url = "/api/v1/mkt/currencies/", privacy_type = "public",http_method = HTTPMethod.GET)
     get_markets : ClassVar[Route] = Route(url = "/api/v1/mkt/markets/", privacy_type = "public",http_method = HTTPMethod.GET)
+    get_networks : ClassVar[Route] = Route(url = "/api/v1/mkt/networks/", privacy_type = "public",http_method = HTTPMethod.GET)
 
 

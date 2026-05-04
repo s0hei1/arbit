@@ -1,5 +1,4 @@
-from typing import Any, Callable
-from httpx import Client, HTTPTransport, Response, Request
+from httpx import Client
 from third_party.nobipy.models.exceptions import NotTestedError
 from third_party.nobipy.models import GetMarketHistoryRequest, GetStatsRequest, AddBankCardRequest, \
     GenerateWalletAddressRequest, AddBankAccountRequest, GetUserWalletsByFilteringResponse, GetBalanceRequest, \
@@ -12,54 +11,6 @@ from third_party.nobipy.models import GetMarketHistoryRequest, GetStatsRequest, 
     WalletDepositsResponse, FavoriteMarketsResponse, GetOrderStatusResponse,WithdrawRequest, WithdrawResponse, WithdrawConfirmRequest, WithdrawsResponse
 
 from third_party.nobipy.models.static_models import Routes
-
-
-
-class ResponseHandler(HTTPTransport):
-
-    def handle_request(self, request: Request):
-        response = super().handle_request(request)
-
-        return response
-
-
-def url_printer_event_hook(request: Request):
-    print()
-    print(f"REQUEST.{request.method} {request.url}")
-
-
-def response_status_code_printer_event_hook(response: Response):
-    print()
-    print(f"RESPONSE {response.url} STATUS CODE {response.status_code}")
-    print(f"Response: {response.read()}")
-
-
-def nobitex_client_factory(
-        base_url: str = 'https://apiv2.nobitex.ir',
-        token: str | None = None,
-        user_agent: str | None = None,
-        request_event_hooks: list[Callable[..., Any]] | None = None,
-        response_event_hooks: list[Callable[..., Any]] | None = None,
-) -> Client:
-    _client = Client(
-        base_url=base_url,
-        timeout=10,
-        transport=ResponseHandler(),
-        event_hooks={
-            "request": request_event_hooks if request_event_hooks is not None else [],
-            "response": response_event_hooks if response_event_hooks is not None else [],
-        },
-    )
-
-    # _client.headers["content-type"] = 'application/json'
-
-    if token is not None:
-        _client.headers["Authorization"] = f"Token {token}"
-
-    if user_agent is not None:
-        _client.headers["User-Agent"] = f'TraderBot/{user_agent}'
-
-    return _client
 
 
 class APIClient:

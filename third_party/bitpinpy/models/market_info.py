@@ -1,8 +1,14 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import List
 
-from src_bitpinpy.models.abstracts import DataclassMappings
+from third_party.bitpinpy.models.abstracts import DataclassMappings
+
+
+@dataclass
+class GetNetworksRequest(DataclassMappings):
+    code : str | None = None
+    can_deposit : bool | None = True
+    can_withdraw : bool | None = True
 
 
 @dataclass
@@ -46,3 +52,24 @@ class MarketResponse:
             quote_amount_precision=data["quote_amount_precision"],
         )
 
+@dataclass
+class NetworkResponse:
+    id: str
+    code: str
+    title: str
+    title_fa: str
+    can_deposit: bool
+    can_withdraw: bool
+    address_pattern: str
+
+    @staticmethod
+    def from_dict(data: dict) -> NetworkResponse:
+        return NetworkResponse(
+            id=data["id"],
+            code=data["code"],
+            title=data["title"],
+            title_fa=data["title_fa"],
+            can_deposit=data["can_deposit"],
+            can_withdraw=data["can_withdraw"],
+            address_pattern=data["address_pattern"],
+        )

@@ -1,5 +1,4 @@
-from src.models.static_models.route import Routes
-from src.models.static_models.resolution import Resolutions
+from third_party.bitpinpy.models.static_models.route import Routes
 
 __all__ = [
     "Routes",

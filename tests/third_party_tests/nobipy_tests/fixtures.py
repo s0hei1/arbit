@@ -1,10 +1,10 @@
 import pytest
 from random import choice, random
-from third_party.nobipy.api_client import nobitex_client_factory, APIClient, url_printer_event_hook, \
-    response_status_code_printer_event_hook
+from third_party.nobipy.api_client import nobitex_client_factory, APIClient
+from third_party.httpx_overhead import request_logger, response_logger
 from third_party.nobipy.models.static_models import Resolutions
 from third_party.nobipy.models.static_models.resolution import Resolution
-from third_party.nobipy.my_token import TOKEN
+
 
 
 @pytest.fixture
@@ -12,8 +12,8 @@ def client() -> APIClient:
     return APIClient(
         client=nobitex_client_factory(
             token=TOKEN,
-            request_event_hooks=[url_printer_event_hook],
-            response_event_hooks=[response_status_code_printer_event_hook]
+            request_event_hooks=[request_logger()],
+            response_event_hooks=[response_logger()]
         ),
 
     )

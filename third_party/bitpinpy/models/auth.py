@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from src_bitpinpy.models.abstracts import DataclassMappings
+from third_party.bitpinpy.models.abstracts import DataclassMappings
 
 
 @dataclass
