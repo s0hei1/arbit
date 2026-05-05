@@ -1,7 +1,8 @@
 from httpx import Client
 from third_party.bitpinpy.models.auth import AuthenticateRequest, AuthenticateResponse
 from third_party.bitpinpy.models.market_info import CurrencyResponse, MarketResponse, NetworkResponse, \
-    GetNetworksRequest
+    GetNetworksRequest, CurrencyNetworkResponse, GetCurrencyNetworksRequest, TickersResponse, OrderBookResponse, \
+    MatchResponse, CommissionsResponse
 from third_party.bitpinpy.models.static_models.route import Routes
 
 class APIClient:
@@ -36,3 +37,36 @@ class APIClient:
         )
         return [NetworkResponse.from_dict(i) for i in response.json()]
 
+    def get_currency_networks(self, payload : GetCurrencyNetworksRequest) -> list[CurrencyNetworkResponse]:
+        # TODO : Not Tested
+        response = self.client.get(
+            url = Routes.get_currency_networks.url,
+            params=payload.to_dict(),
+        )
+        return [CurrencyNetworkResponse.from_dict(i) for i in response.json()]
+
+    def get_tickers(self) -> list[TickersResponse]:
+        response = self.client.get(
+            url = Routes.get_tickers.url,
+        )
+        return [TickersResponse.from_dict(i) for i in response.json()]
+
+    def get_order_book(self, symbol_name : str) -> OrderBookResponse:
+        response = self.client.get(
+            url = Routes.get_order_book.url_with_path_parameter(f'{symbol_name}/'),
+        )
+        return OrderBookResponse.from_dict(response.json())
+
+    def get_matches(self, symbol_name : str) -> list[MatchResponse]:
+        response = self.client.get(
+            url = Routes.get_matches.url_with_path_parameter(f'{symbol_name}/'),
+        )
+        return [MatchResponse.from_dict(i) for i in response.json()]
+
+    get_last_trades = get_matches
+
+    def get_commissions(self) -> list[CommissionsResponse]:
+        response = self.client.get(
+            url = Routes.get_commissions.url,
+        )
+        return [CommissionsResponse.from_dict(i) for i in response.json()]

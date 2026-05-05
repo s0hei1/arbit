@@ -22,5 +22,9 @@ class Routes:
     get_currencies : ClassVar[Route] = Route(url = "/api/v1/mkt/currencies/", privacy_type = "public",http_method = HTTPMethod.GET)
     get_markets : ClassVar[Route] = Route(url = "/api/v1/mkt/markets/", privacy_type = "public",http_method = HTTPMethod.GET)
     get_networks : ClassVar[Route] = Route(url = "/api/v1/mkt/networks/", privacy_type = "public",http_method = HTTPMethod.GET)
-
+    get_currency_networks : ClassVar[Route] = Route(url ="/api/v1/wlt/networks/", privacy_type ="public", http_method = HTTPMethod.GET)
+    get_tickers : ClassVar[Route] = Route(url ="/api/v1/mkt/tickers/", privacy_type ="public", http_method = HTTPMethod.GET)
+    get_order_book : ClassVar[Route] = Route(url ="/api/v1/mth/orderbook/", privacy_type ="public", http_method = HTTPMethod.GET)
+    get_matches : ClassVar[Route] = Route(url ="/api/v1/mth/matches/", privacy_type ="public", http_method = HTTPMethod.GET)
+    get_commissions : ClassVar[Route] = Route(url ="api/v1/mkt/commissions/", privacy_type ="public", http_method = HTTPMethod.GET)
 
