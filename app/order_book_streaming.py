@@ -1,4 +1,4 @@
-from typing import Callable, Awaitable
+from __future__ import annotations
 
 from app.models import OrderBook
 from app.static_models.exchanges import Exchange
@@ -30,30 +30,25 @@ class ExchangeEventHandler(SubscriptionEventHandler):
             key = self.key
         ))
 
-class MultipleExchangeStreaming:
+@dataclass
+class _ExchangeStreamModel:
+    exchange : Exchange
+    client : Client
 
-    @dataclass
-    class _ExchangeStreamModel:
-        exchange : Exchange
-        client : Client
+
+class MultipleExchangeStreaming:
 
     def __init__(self, *exchanges : Exchange):
         self._exchange_stream_models = [
             _ExchangeStreamModel(
                 exchange = ex,
+                client= Client(
+                    ex.wss
+                )
             )
             for ex in exchanges
         ]
 
-    async def start(self):
-        web_socket_clients =[]
-        for exchange in self.exchanges:
-            web_socket_clients.append(
-                Client(
-                    address= '',
-                )
-            )
-
-
-
+    async def _(self) -> OrderBook:
+        pass
 
