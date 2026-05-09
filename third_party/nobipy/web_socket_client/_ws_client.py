@@ -1,9 +1,11 @@
 import asyncio
+from typing import AsyncGenerator, Any
+
 from centrifuge import Client, SubscriptionState
 from third_party.nobipy.models import GetOrderBookResponse
 from third_party.nobipy.web_socket_client._event_handler import EventHandler
 
-class WebSocketClient:
+class NobipyWebSocketClient:
 
     def __init__(self):
         self.client = Client('wss://ws.nobitex.ir/connection/websocket')
@@ -34,6 +36,8 @@ class WebSocketClient:
 
         if yield_as_dict:
             while True:
+                print(await self._queue.get())
+                await asyncio.sleep(1)
                 yield await self._queue.get()
         else:
             while True:

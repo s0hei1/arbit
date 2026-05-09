@@ -5,7 +5,7 @@ from centrifuge import Client, SubscriptionState
 from third_party.bitpinpy.models.market_info import OrderBookResponse
 from third_party.bitpinpy.web_socket_client._event_handler import EventHandler
 
-class WebSocketClient:
+class BitpinWebSocketClient:
 
     def __init__(self):
         self.client = Client('wss://centrifugo.bitpin.ir/connection/websocket')
@@ -36,6 +36,7 @@ class WebSocketClient:
 
         if yield_as_dict:
             while True:
+                print(await self._queue.get())
                 yield await self._queue.get()
         else:
             while True:

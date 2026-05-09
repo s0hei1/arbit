@@ -1,54 +1,28 @@
 from __future__ import annotations
-
-from app.models import OrderBook
-from app.static_models.exchanges import Exchange
-from centrifuge import Client, SubscriptionEventHandler, PublicationContext
 import asyncio
-from dataclasses import dataclass
-import datetime as dt
+from third_party.bitpinpy.web_socket_client._ws_client import BitpinWebSocketClient
+from third_party.nobipy.web_socket_client._ws_client import NobipyWebSocketClient
 
 
-@dataclass
-class ExchangeEventModel:
-    exchange_name : str
-    key : str
-    event_timestamp: float
-    data : dict
 
-class ExchangeEventHandler(SubscriptionEventHandler):
+async def main():
+    bitpin = BitpinWebSocketClient()
+    nobitex = NobipyWebSocketClient()
 
-    def __init__(self,exchange : Exchange,key : str ,queue : asyncio.Queue[ExchangeEventModel]):
-        self.exchange = exchange
-        self.queue = queue
-        self.key = key
+    gen_nobitex = nobitex.channel_order_book("BTCIRT",yield_as_dict=True)
+    gen_bitpin = bitpin.channel_order_book("BTC_IRT",yield_as_dict=True)
 
-    async def on_publication(self, ctx: PublicationContext) -> None:
-        await self.queue.put(ExchangeEventModel(
-            exchange_name= self.exchange.name,
-            event_timestamp= dt.datetime.now().timestamp(),
-            data=ctx.pub.data,
-            key = self.key
-        ))
+    while True:
+        # read both feeds concurrently (non‑blocking)
+        order_nobitex = await anext(gen_nobitex)
+        order_bitpin = await anext(gen_bitpin)
 
-@dataclass
-class _ExchangeStreamModel:
-    exchange : Exchange
-    client : Client
+        iter_nobitex = await aiter(order_nobitex)
 
+        order_book = await anext(iter_nobitex)
 
-class MultipleExchangeStreaming:
+        print(order_book)
 
-    def __init__(self, *exchanges : Exchange):
-        self._exchange_stream_models = [
-            _ExchangeStreamModel(
-                exchange = ex,
-                client= Client(
-                    ex.wss
-                )
-            )
-            for ex in exchanges
-        ]
+        await asyncio.sleep(1)
 
-    async def _(self) -> OrderBook:
-        pass
-
+asyncio.run(main())
