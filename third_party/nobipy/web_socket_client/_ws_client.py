@@ -36,7 +36,6 @@ class NobipyWebSocketClient:
 
         if yield_as_dict:
             while True:
-                print(await self._queue.get())
                 await asyncio.sleep(1)
                 yield await self._queue.get()
         else:

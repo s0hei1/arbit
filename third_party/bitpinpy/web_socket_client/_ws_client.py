@@ -36,7 +36,6 @@ class BitpinWebSocketClient:
 
         if yield_as_dict:
             while True:
-                print(await self._queue.get())
                 yield await self._queue.get()
         else:
             while True:

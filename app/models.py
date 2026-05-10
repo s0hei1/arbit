@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from numpy.typing import NDArray
 import numpy as np
@@ -8,11 +10,15 @@ Exchanges = Literal['nobitex', 'bitpin']
 @dataclass(frozen=True)
 class OrderBook:
     exchange_name : Exchanges
-    asks: NDArray[np.float64]
-    bids: NDArray[np.float64]
+    asks: NDArray[np.float16]
+    bids: NDArray[np.float16]
+
+
+    def get_last_suggests(self):
+        return self.asks[-1], self.bids[-1]
 
     @staticmethod
-    def from_dict_bitpin(data: dict[str, ...]):
+    def from_bitpin(data: dict[str, ...]) -> OrderBook:
         return OrderBook(
             exchange_name='bitpin',
             asks=np.array(
@@ -34,7 +40,7 @@ class OrderBook:
         )
 
     @staticmethod
-    def from_nobitex(data: dict[str, ...]):
+    def from_nobitex(data: dict[str, ...]) -> OrderBook:
         return OrderBook(
             exchange_name='nobitex',
             asks=np.array(
