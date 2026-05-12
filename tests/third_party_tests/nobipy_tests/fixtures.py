@@ -11,7 +11,7 @@ from third_party.nobipy.models.static_models.resolution import Resolution
 def client() -> APIClient:
     return APIClient(
         client=nobitex_client_factory(
-            token=TOKEN,
+            token='TOKEN',
             request_event_hooks=[request_logger()],
             response_event_hooks=[response_logger()]
         ),

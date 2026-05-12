@@ -8,6 +8,7 @@ from third_party.nobipy.models.profile import GetStatsRequest, AddBankCardReques
     GetProfileResponse, StatsResponse, TradesResponse, TransactionsHistoryResponse, WalletDepositsResponse, \
     WalletTransactionsResponse, GetWalletsListResponse, AddFavoriteMarketsRequest, GetDepositsRequest, \
     GetWalletTransactionsRequest
+from third_party.nobipy.models.static_models import Resolutions
 from third_party.nobipy.models.trading import GetOrderStatusRequest, GetSpotOrdersRequest, UpdateOrderStatusRequest, \
     CancelOrdersRequest, \
     GetOrderStatusResponse, AddOrderRequest, GetTradesRequest, UpdateOrderStatusResponse, SpotTradesResponse, \
@@ -59,6 +60,9 @@ __all__ = [
     'UpdateOrderStatusResponse',
     'AddOrderResponse',
     'WithdrawResponse',
-    'WithdrawsResponse'
+    'WithdrawsResponse',
+
+    'Resolutions',
+
 ]
 

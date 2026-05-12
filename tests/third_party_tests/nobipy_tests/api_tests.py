@@ -42,7 +42,7 @@ def test_get_stats(client : APIClient, any_symbol : str):
 def test_get_market_history(client : APIClient, any_symbol : str):
     response = client.get_market_history(
         GetMarketHistoryRequest(
-            symbol = any_symbol,
+            symbol = 'DAIUSDT',
             resolution = Resolutions.D1.value,
             to = int(dt.datetime.now(dt.UTC).timestamp()),
             page = 1,
