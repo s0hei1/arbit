@@ -1,30 +1,38 @@
 from __future__ import annotations
 import asyncio
-
+import numpy as np
 from app.models import OrderBook
+from app.static_models.common_symbols import SharedSymbol, SharedSymbols
 from third_party.bitpinpy.web_socket_client._ws_client import BitpinWebSocketClient
 from third_party.nobipy.web_socket_client._ws_client import NobipyWebSocketClient
 
 
+class OrderBookStreaming():
+    def __init__(self,symbol : SharedSymbol, ):
+        self.symbol = symbol
+        self.bitpin = BitpinWebSocketClient()
+        self.nobitex = NobipyWebSocketClient()
 
-async def main():
-    bitpin = BitpinWebSocketClient()
-    nobitex = NobipyWebSocketClient()
+    async def run(self):
+        await self.bitpin.connect()
+        await self.nobitex.connect()
 
-    await bitpin.connect()
-    await nobitex.connect()
+        gen_nobitex = self.nobitex.channel_order_book(self.symbol.nobitex_name, yield_as_dict=True)
+        gen_bitpin = self.bitpin.channel_order_book(self.symbol.bitpin_name, yield_as_dict=True)
+        np.set_printoptions(suppress=True)
 
-    gen_nobitex = nobitex.channel_order_book("ETHUSDT",yield_as_dict=True)
-    gen_bitpin = bitpin.channel_order_book("ETH_USDT",yield_as_dict=True)
+        while True:
 
-    while True:
-        # read both feeds concurrently (non‑blocking)
-        order_nobitex = await anext(gen_nobitex)
-        order_bitpin = await anext(gen_bitpin)
+            ob_nobitex = OrderBook.from_nobitex(await anext(gen_nobitex))
+            ob_bitpin = OrderBook.from_bitpin(await anext(gen_bitpin))
 
-        print(OrderBook.from_nobitex(order_nobitex).get_last_suggests())
-        print(OrderBook.from_bitpin(order_bitpin).get_last_suggests())
+            if ob_nobitex.last_bid[0] > ob_bitpin.last_ask[0]:
+                print(f"Trigger Nobitex : {ob_nobitex.last_bid} > {ob_bitpin.last_ask}")
 
-        await asyncio.sleep(1)
+            if ob_bitpin.last_bid[0] > ob_nobitex.last_ask[0]:
+                print(f"Trigger Bitpin : {ob_bitpin.last_bid} > {ob_nobitex.last_ask}")
 
-asyncio.run(main())
+            print("Running")
+
+o = OrderBookStreaming(SharedSymbols.TRXUSDT)
+asyncio.run(o.run())
