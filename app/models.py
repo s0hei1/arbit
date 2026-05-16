@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 from numpy.typing import NDArray
 import numpy as np
@@ -27,15 +26,24 @@ class OrderBook:
 
 
     def get_last_suggests(self):
-        return self.last_bid, self.last_ask
+        return self.last_bid_price, self.last_ask_price
 
     @property
-    def last_bid(self):
-        return self.bids[0]
+    def last_bid_price(self): # Buy Suggests
+        return self.bids[0,0]
 
     @property
-    def last_ask(self):
-        return self.asks[0]
+    def last_ask_price(self): # Sell Suggests
+        return self.asks[0,0]
+
+    @property
+    def last_bid_volume(self): # Buy Suggests
+        return self.bids[0,1]
+
+    @property
+    def last_ask_volume(self): # Sell Suggests
+        return self.asks[0,1]
+
 
     @staticmethod
     def from_bitpin(data: dict[str, ...]) -> OrderBook:

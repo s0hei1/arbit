@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 from typing import ClassVar
+from typing import Literal
+
+SupportedExchanges = Literal['nobitex', 'bitpin']
+
 
 @dataclass(frozen=True)
 class CommonChannelURLs:
@@ -7,7 +11,7 @@ class CommonChannelURLs:
 
 @dataclass(frozen=True)
 class Exchange:
-    name: str
+    name: SupportedExchanges
     wss: str
     channels_url: CommonChannelURLs
 
