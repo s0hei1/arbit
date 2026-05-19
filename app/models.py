@@ -3,8 +3,10 @@ from dataclasses import dataclass
 from numpy.typing import NDArray
 import numpy as np
 from typing import Literal
+from app.static_models.exchanges import SupportedExchanges
 
-Exchanges = Literal['nobitex', 'bitpin']
+order_type = Literal['market', 'limit']
+order_side = Literal['buy', 'sell']
 
 @dataclass
 class OrderBookEntry:
@@ -20,7 +22,7 @@ class OrderBookEntry:
 
 @dataclass(frozen=True)
 class OrderBook:
-    exchange_name : Exchanges
+    exchange_name : SupportedExchanges
     asks: NDArray[np.float16, np.float16]
     bids: NDArray[np.float16, np.float16]
 
@@ -89,4 +91,9 @@ class OrderBook:
             ),
         )
 
+@dataclass(frozen=True)
+class SetOrder:
+    exchange_name : SupportedExchanges
+    order_type : order_side
+    order_type : order_type = 'limit'
 
