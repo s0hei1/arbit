@@ -46,6 +46,12 @@ class OrderBook:
     def last_ask_volume(self): # Sell Suggests
         return self.asks[0,1]
 
+    def size(self):
+        if self.asks.shape[0] == self.bids.shape[0]:
+            return self.asks.shape[0]
+        else:
+            return (self.asks.shape[0], self.bids.shape[0])
+
 
     @staticmethod
     def from_bitpin(data: dict[str, ...]) -> OrderBook:

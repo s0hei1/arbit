@@ -54,8 +54,8 @@ class ArbitOrderBookTrader():
             ob_nobitex = OrderBook.from_nobitex(await anext(gen_nobitex))
             ob_bitpin = OrderBook.from_bitpin(await anext(gen_bitpin))
 
-            logger.debug(f'{symbol.name} in Nobitex, bid= {ob_nobitex.last_bid_price}, ask= {ob_nobitex.last_ask_price}')
-            logger.debug(f'{symbol.name} in BITPIN, bid= {ob_bitpin.last_bid_price}, ask= {ob_bitpin.last_ask_price}')
+            logger.info(f'{symbol.name} in Nobitex, bid= {ob_nobitex.last_bid_price}, ask= {ob_nobitex.last_ask_price}')
+            logger.info(f'{symbol.name} in BITPIN, bid= {ob_bitpin.last_bid_price}, ask= {ob_bitpin.last_ask_price}')
 
             if ob_nobitex.last_bid_price > ob_bitpin.last_ask_price:
                 await self.queue.put(TradeTrigger(
@@ -88,7 +88,6 @@ class ArbitOrderBookTrader():
             asyncio.create_task(self._stream(symbol))
 
         t = asyncio.current_task()
-        t.
 
         while True:
             trading_trigger = await self.queue.get()
@@ -107,5 +106,12 @@ class ArbitOrderBookTrader():
 
 
 
-o = ArbitOrderBookTrader(SharedSymbols.TRXUSDT, SharedSymbols.ETHUSDT,SharedSymbols.BTCUSDT)
+o = ArbitOrderBookTrader(
+    SharedSymbols.TRXUSDT,
+    SharedSymbols.ETHUSDT,
+    SharedSymbols.BTCUSDT,
+    SharedSymbols.BNBUSDT,
+    SharedSymbols.SOLUSDT,
+)
 asyncio.run(o.run())
+

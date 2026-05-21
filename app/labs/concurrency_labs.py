@@ -1,71 +1,68 @@
-from __future__ import annotations
-import asyncio
-import numpy as np
-from app.models import OrderBook
-from app.static_models.common_symbols import SharedSymbol, SharedSymbols
-from app.static_models.exchanges import Exchange, SupportedExchanges
-from third_party.bitpinpy.web_socket_client._ws_client import BitpinWebSocketClient
-from third_party.nobipy.web_socket_client._ws_client import NobipyWebSocketClient
-from dataclasses import dataclass
-from random import randint
+import random
+import trio
 
 
-@dataclass
-class Trigger:
-    value : int
-    symbol : str
-
-class ArbitOrderBookTriggering():
-    def __init__(self,queue : asyncio.Queue,symbol : str):
-        self.queue = queue
-        self.symbol = symbol
-
-    async def run(self):
+async def method_a():
+    i = 0
+    while True:
+        print(f"A: step {i}")
+        i += 1
+        await trio.sleep(0.4)
 
 
+async def method_b():
+    i = 0
+    while True:
+        print(f"B: step {i}")
+        i += 1
+        await trio.sleep(0.6)
 
 
-        while True:
-            value_a = randint(1, 100)
-            value_b = randint(1, 100)
-            # print(value_a,'>?',value_b)
-            if value_a > value_b:
-                await self.queue.put(
-                    Trigger(value_a,self.symbol)
-                )
-
-            await asyncio.sleep(2)
+async def method_c():
+    i = 0
+    while True:
+        print(f"C: step {i}")
+        i += 1
+        await trio.sleep(0.8)
 
 
+async def pauser(cancel_scopes):
+    # Every few seconds, randomly pause one method for 5 seconds
+    while True:
+        await trio.sleep(2)
 
-class ArbitOrderBookTrader:
+        name = random.choice(list(cancel_scopes.keys()))
+        print(f"\n--- Pausing {name} for 5 seconds ---")
 
-    def __init__(self, *symbols : str):
-        self.queue = asyncio.Queue()
+        # Cancel the current run of that method, then restart it after 5s
+        cancel_scopes[name].cancel()
 
-        self.trigger_checkers = [ArbitOrderBookTriggering(
-            queue = self.queue,
-            symbol = symbol
-        ) for symbol in symbols]
+        await trio.sleep(5)
 
-
-
-    async def start(self):
-
-        for i in self.trigger_checkers:
-            asyncio.create_task(i.run())
+        print(f"--- Resuming {name} ---\n")
 
 
-        while True:
-            print(await self.queue.get())
-            await asyncio.sleep(0.1)
+async def run_worker(name, worker_fn, cancel_scopes):
+    # Loop forever: worker runs until cancelled; then we restart it
+    while True:
+        with trio.CancelScope() as scope:
+            cancel_scopes[name] = scope
+            await worker_fn()
 
 
+async def main():
+    cancel_scopes = {}
+
+    async with trio.open_nursery() as nursery:
+        nursery.start_soon(run_worker, "A", method_a, cancel_scopes)
+        nursery.start_soon(run_worker, "B", method_b, cancel_scopes)
+        nursery.start_soon(run_worker, "C", method_c, cancel_scopes)
+
+        nursery.start_soon(pauser, cancel_scopes)
+
+        # Let the demo run for a while then exit
+        await trio.sleep(25)
+        nursery.cancel_scope.cancel()
 
 
-
-
-
-trader = ArbitOrderBookTrader("ETHUSDT", "BTCUSDT")
-
-asyncio.run(trader.start())
+trio.run(main)
